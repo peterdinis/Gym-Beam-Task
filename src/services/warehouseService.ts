@@ -26,23 +26,40 @@ export class WarehouseApiService {
 
             return response.data;
         } catch (err: unknown) {
-            const error = err as WarehouseApiError;
-
-            if (axios.isAxiosError(error)) {
-                if (error.response) {
+            // Handle axios errors (real or mocked)
+            if (axios.isAxiosError(err)) {
+                if (err.response) {
                     throw new Error(
-                        `API Error: ${error.response.status} - ${error.response.statusText}`,
+                        `API Error: ${err.response.status} - ${err.response.statusText}`,
                     );
-                } else if (error.request) {
+                } else if (err.request) {
                     throw new Error('Network Error: Unable to reach warehouse API');
                 } else {
-                    throw new Error(`Request Error: ${error.message}`);
+                    throw new Error(`Request Error: ${err.message}`);
                 }
-            } else if (error instanceof Error) {
-                throw new Error(`Unknown Error: ${error.message}`);
-            } else {
-                throw new Error('Unknown non-error thrown');
             }
+
+            // Handle mock axios errors in tests
+            if (err && typeof err === 'object' && 'isAxiosError' in err && err.isAxiosError) {
+                const mockError = err as any;
+                if (mockError.response) {
+                    throw new Error(
+                        `API Error: ${mockError.response.status} - ${mockError.response.statusText}`,
+                    );
+                } else if (mockError.request) {
+                    throw new Error('Network Error: Unable to reach warehouse API');
+                } else {
+                    throw new Error(`Request Error: ${mockError.message || 'Unknown axios error'}`);
+                }
+            }
+
+            // Handle regular errors
+            if (err instanceof Error) {
+                throw new Error(`Unknown Error: ${err.message}`);
+            }
+
+            // Handle completely unknown errors
+            throw new Error('Unknown non-error thrown');
         }
     }
 

@@ -69,9 +69,18 @@ export class OptimizationService {
         // Create array of products to pick
         const productsToPickup = Array.from(productsPositions.keys());
 
+        // Check if there are any products with available positions at the start
+        const hasAnyAvailableProducts = Array.from(productsPositions.values()).some((positions) =>
+            positions.some((pos) => pos.quantity > 0),
+        );
+
+        if (!hasAnyAvailableProducts) {
+            throw new Error('No available positions found for remaining products');
+        }
+
         // Greedy algorithm: always pick the closest available product
         while (productsToPickup.length > 0) {
-            let closestProductIndex = 0;
+            let closestProductIndex = -1;
             let closestPosition: ProductPosition | null = null;
             let minDistance = Infinity;
 
@@ -95,8 +104,26 @@ export class OptimizationService {
                 }
             }
 
-            if (!closestPosition) {
-                throw new Error('No available positions found for remaining products');
+            // If no products with available positions found, remove unavailable products and continue
+            if (closestProductIndex === -1 || !closestPosition) {
+                // Remove all products that have no available positions
+                for (let i = productsToPickup.length - 1; i >= 0; i--) {
+                    const productId = productsToPickup[i];
+                    const positions = productsPositions.get(productId)!;
+                    const hasAvailablePositions = positions.some((pos) => pos.quantity > 0);
+
+                    if (!hasAvailablePositions) {
+                        productsToPickup.splice(i, 1);
+                    }
+                }
+
+                // If no products left with available positions, break the loop
+                if (productsToPickup.length === 0) {
+                    break;
+                }
+
+                // Continue to next iteration to find available products
+                continue;
             }
 
             // Add to picking order
