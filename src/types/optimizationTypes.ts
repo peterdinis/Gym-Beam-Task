@@ -1,5 +1,3 @@
-import { ZodError } from "zod";
+import { ZodError } from 'zod';
 
-export type OptimizationError =
-  | ZodError
-  | (Error & { code?: string });
+export type OptimizationError = ZodError | (Error & { code?: string });

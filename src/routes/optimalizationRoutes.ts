@@ -1,5 +1,5 @@
-import express, { Router } from "express";
-import { OptimizationController } from "../controllers/optimalizationController";
+import express, { Router } from 'express';
+import { OptimizationController } from '../controllers/optimalizationController';
 
 const router: Router = express.Router();
 const optimizationController = new OptimizationController();
@@ -11,9 +11,9 @@ const optimizationController = new OptimizationController();
 
 /**
  * POST /optimize
- * 
+ *
  * Optimize order picking based on a list of products and the worker's starting position.
- * 
+ *
  * @name POST /optimize
  * @function
  * @memberof module:OptimizationRoutes
@@ -39,7 +39,7 @@ const optimizationController = new OptimizationController();
  * }
  */
 router.post('/optimize', (req, res) => {
-  optimizationController.optimizeOrder(req, res);
+    optimizationController.optimizeOrder(req, res);
 });
 
 export default router;

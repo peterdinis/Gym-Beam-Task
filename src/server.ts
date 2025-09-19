@@ -2,9 +2,9 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
-import optimalizationRoutes from "./routes/optimalizationRoutes"
+import optimalizationRoutes from './routes/optimalizationRoutes';
 import { setupSwagger } from './swagger';
-import 'dotenv/config'; 
+import 'dotenv/config';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -17,18 +17,18 @@ app.use(express.urlencoded({ extended: true }));
 
 // Logging middleware
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    next();
 });
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    version: '1.0.0'
-  });
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        version: '1.0.0',
+    });
 });
 
 // Routes
@@ -42,7 +42,7 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 GymBeam Warehouse Optimization Server running on port ${PORT}`);
+    console.log(`🚀 GymBeam Warehouse Optimization Server running on port ${PORT}`);
 });
 
 export default app;

@@ -2,14 +2,14 @@ import { z } from 'zod';
 import { OrderRequest } from '../types/globalTypes';
 
 const positionSchema = z.object({
-  x: z.number(),
-  y: z.number(),
-  z: z.number(),
+    x: z.number(),
+    y: z.number(),
+    z: z.number(),
 });
 
 const orderRequestSchema = z.object({
-  products: z.array(z.string()).nonempty({ message: 'Products array cannot be empty' }),
-  startingPosition: positionSchema,
+    products: z.array(z.string()).nonempty({ message: 'Products array cannot be empty' }),
+    startingPosition: positionSchema,
 });
 
 /**
@@ -19,5 +19,5 @@ const orderRequestSchema = z.object({
  * @throws ZodError if validation fails
  */
 export function validateOrderRequest(body: unknown): OrderRequest {
-  return orderRequestSchema.parse(body);
+    return orderRequestSchema.parse(body);
 }

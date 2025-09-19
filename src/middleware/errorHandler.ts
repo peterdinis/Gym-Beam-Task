@@ -5,7 +5,7 @@ import { formatISO } from 'date-fns';
  * Extended Error interface to allow custom HTTP status codes.
  */
 export interface AppError extends Error {
-  statusCode?: number;
+    statusCode?: number;
 }
 
 /**
@@ -16,22 +16,18 @@ export interface AppError extends Error {
  * @param req - Express Request object
  * @param res - Express Response object
  */
-export const errorHandler = (
-  error: AppError,
-  req: Request,
-  res: Response
-): void => {
-  console.error('Unhandled error:', error);
+export const errorHandler = (error: AppError, req: Request, res: Response): void => {
+    console.error('Unhandled error:', error);
 
-  const statusCode = error.statusCode || 500;
-  const message = error.message || 'Internal Server Error';
+    const statusCode = error.statusCode || 500;
+    const message = error.message || 'Internal Server Error';
 
-  res.status(statusCode).json({
-    error: message,
-    timestamp: formatISO(new Date()),
-    path: req.path,
-    method: req.method,
-  });
+    res.status(statusCode).json({
+        error: message,
+        timestamp: formatISO(new Date()),
+        path: req.path,
+        method: req.method,
+    });
 };
 
 /**
@@ -42,9 +38,9 @@ export const errorHandler = (
  * @param res - Express Response object
  */
 export const notFoundHandler = (req: Request, res: Response): void => {
-  res.status(404).json({
-    error: 'Endpoint not found',
-    message: `Cannot ${req.method} ${req.path}`,
-    timestamp: formatISO(new Date()),
-  });
+    res.status(404).json({
+        error: 'Endpoint not found',
+        message: `Cannot ${req.method} ${req.path}`,
+        timestamp: formatISO(new Date()),
+    });
 };
