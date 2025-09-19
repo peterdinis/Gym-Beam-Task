@@ -1,16 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
-import { ProductPosition } from '../types/globalTypes';
-import { WarehouseApiError } from '../types/warehouseTypes';
+import { MockAxiosError, ProductPosition } from '../types/globalTypes';
 
 export class WarehouseApiService {
     private readonly baseUrl = process.env.WAREHOUSE_API_BASE_URL;
     private readonly apiKey = process.env.WAREHOUSE_API_KEY;
 
-    /**
-     * Fetch all positions for a specific product from the warehouse API
-     * @param productId - The product identifier (e.g., "product-1")
-     * @returns Array of product positions
-     */
     async getProductPositions(productId: string): Promise<ProductPosition[]> {
         try {
             const response: AxiosResponse<ProductPosition[]> = await axios.get(
@@ -26,7 +20,6 @@ export class WarehouseApiService {
 
             return response.data;
         } catch (err: unknown) {
-            // Handle axios errors (real or mocked)
             if (axios.isAxiosError(err)) {
                 if (err.response) {
                     throw new Error(
@@ -40,8 +33,8 @@ export class WarehouseApiService {
             }
 
             // Handle mock axios errors in tests
-            if (err && typeof err === 'object' && 'isAxiosError' in err && err.isAxiosError) {
-                const mockError = err as any;
+            const mockError = err as MockAxiosError;
+            if (mockError.isAxiosError) {
                 if (mockError.response) {
                     throw new Error(
                         `API Error: ${mockError.response.status} - ${mockError.response.statusText}`,
@@ -53,21 +46,14 @@ export class WarehouseApiService {
                 }
             }
 
-            // Handle regular errors
             if (err instanceof Error) {
                 throw new Error(`Unknown Error: ${err.message}`);
             }
 
-            // Handle completely unknown errors
             throw new Error('Unknown non-error thrown');
         }
     }
 
-    /**
-     * Fetch positions for multiple products concurrently
-     * @param productIds - Array of product identifiers
-     * @returns Map of productId to array of positions
-     */
     async getMultipleProductPositions(
         productIds: string[],
     ): Promise<Map<string, ProductPosition[]>> {

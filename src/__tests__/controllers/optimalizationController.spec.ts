@@ -25,7 +25,7 @@ describe('OptimizationController E2E', () => {
 
         // Setup mock warehouse service
         mockWarehouseService = new MockedWarehouseApiService() as jest.Mocked<WarehouseApiService>;
-        (controller as any).warehouseApi = mockWarehouseService;
+        (controller as unknown as { warehouseApi: jest.Mocked<WarehouseApiService> }).warehouseApi = mockWarehouseService;
 
         // Setup route
         app.post('/optimize', (req, res) => controller.optimizeOrder(req, res));

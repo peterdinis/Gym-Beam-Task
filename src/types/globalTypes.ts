@@ -32,3 +32,11 @@ export interface ApiError {
     message: string;
     statusCode: number;
 }
+
+
+export interface MockAxiosError {
+    isAxiosError: boolean;
+    response?: { status: number; statusText: string };
+    request?: unknown;
+    message?: string;
+}
