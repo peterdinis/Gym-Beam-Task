@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { OrderRequest } from '../types';
+import { OrderRequest } from '../types/globalTypes';
 
 const positionSchema = z.object({
   x: z.number(),

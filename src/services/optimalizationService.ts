@@ -1,4 +1,5 @@
-import { Position3D, ProductPosition, PickingOrderItem, OptimizationResult } from '../types';
+import { Position3D, ProductPosition, OptimizationResult, PickingOrderItem } from "../types/globalTypes";
+
 
 export class OptimizationService {
   /**

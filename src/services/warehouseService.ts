@@ -1,9 +1,11 @@
-import axios, { AxiosResponse } from 'axios';
-import { ProductPosition } from '../types';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { ProductPosition } from '../types/globalTypes';
+import { WarehouseApiError } from '../types/warehouseTypes';
+
 
 export class WarehouseApiService {
-  private readonly baseUrl = 'https://api.gymbeam.io/case-study-picking-optimization';
-  private readonly apiKey = 'MVGBMS0VQI555bTery9qJ91BfUpi53N24SkKMf9Z';
+  private readonly baseUrl = process.env.WAREHOUSE_API_BASE_URL;
+  private readonly apiKey = process.env.WAREHOUSE_API_KEY;
 
   /**
    * Fetch all positions for a specific product from the warehouse API
@@ -19,18 +21,26 @@ export class WarehouseApiService {
             'x-api-key': this.apiKey,
             'Content-Type': 'application/json'
           },
-          timeout: 5000 // 5 second timeout
+          timeout: 5000
         }
       );
 
       return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        throw new Error(`API Error: ${error.response.status} - ${error.response.statusText}`);
-      } else if (error.request) {
-        throw new Error('Network Error: Unable to reach warehouse API');
+    } catch (err: unknown) {
+      const error = err as WarehouseApiError;
+
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          throw new Error(`API Error: ${error.response.status} - ${error.response.statusText}`);
+        } else if (error.request) {
+          throw new Error('Network Error: Unable to reach warehouse API');
+        } else {
+          throw new Error(`Request Error: ${error.message}`);
+        }
+      } else if (error instanceof Error) {
+        throw new Error(`Unknown Error: ${error.message}`);
       } else {
-        throw new Error(`Request Error: ${error.message}`);
+        throw new Error('Unknown non-error thrown');
       }
     }
   }

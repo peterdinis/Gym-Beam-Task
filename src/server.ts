@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import optimalizationRoutes from "./routes/optimalizationRoutes"
 import { setupSwagger } from './swagger';
+import 'dotenv/config'; 
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;

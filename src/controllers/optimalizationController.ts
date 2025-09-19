@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import { OptimizationService } from '../services/optimalizationService';
 import { WarehouseApiService } from '../services/warehouseService';
 import { validateOrderRequest } from '../validators/orderValidator';
+import { OptimizationError } from '../types/optimizationTypes';
 import { ZodError } from 'zod';
-
 /**
  * Controller for order optimization
  */
@@ -73,34 +73,40 @@ export class OptimizationController {
 
       const productsPositions = await this.warehouseApi.getMultipleProductPositions(orderRequest.products);
 
-      const result = this.optimizationService.optimizePickingOrder(productsPositions, orderRequest.startingPosition);
+      const result = this.optimizationService.optimizePickingOrder(
+        productsPositions,
+        orderRequest.startingPosition
+      );
 
       res.json(result);
 
-    } catch (error: any) {
-      console.error('Error processing optimization request:', error.message);
+    } catch (err: unknown) {
+      const error = err as OptimizationError;
+
+      console.error('Error processing optimization request:', error instanceof Error ? error.message : error);
 
       if (error instanceof ZodError) {
-  res.status(400).json({
-    error: 'Invalid request format',
-    details: error.issues, // ✅ use issues instead of errors
-  });
-} else if (error.message.includes('API Error') || error.message.includes('Network Error')) {
-  res.status(502).json({
-    error: 'Unable to fetch warehouse data',
-    details: error.message,
-  });
-} else if (error.message.includes('No available positions')) {
-  res.status(404).json({
-    error: error.message,
-  });
-} else {
-  res.status(500).json({
-    error: 'Internal server error',
-    details: error.message,
-  });
-}
-
+        res.status(400).json({
+          error: 'Invalid request format',
+          details: error.issues,
+        });
+      } else if (error instanceof Error && (
+        error.message.includes('API Error') || error.message.includes('Network Error')
+      )) {
+        res.status(502).json({
+          error: 'Unable to fetch warehouse data',
+          details: error.message,
+        });
+      } else if (error instanceof Error && error.message.includes('No available positions')) {
+        res.status(404).json({
+          error: error.message,
+        });
+      } else {
+        res.status(500).json({
+          error: 'Internal server error',
+          details: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
   }
 }
