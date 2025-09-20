@@ -20,7 +20,7 @@ This server integrates with the GymBeam Warehouse API to fetch real product posi
 - **Order Optimization**: Compute the optimal picking route and distance for a set of products.
 - **Error Handling**: Handles validation errors, warehouse API errors, and internal server errors gracefully.
 - **Swagger Documentation**: Automatically generated API docs at `/api-docs`.
-
+- **Unit tests and E2E tests**: All tests are written using the **Jest** framework, covering both unit and end-to-end scenarios.
 ---
 
 ## Prerequisites
