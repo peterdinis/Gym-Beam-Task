@@ -1,14 +1,42 @@
 import { OptimizationService } from '../../services/optimalizationService';
 import { ProductPosition, Position3D, OptimizationResult } from '../../types/globalTypes';
 
+/**
+ * Test suite for the {@link OptimizationService}.
+ *
+ * This suite validates that the `OptimizationService` correctly determines
+ * the optimal picking order of products in a warehouse and calculates the
+ * total distance traveled when picking items.
+ */
 describe('OptimizationService', () => {
     let service: OptimizationService;
 
+    /**
+     * Creates a new instance of {@link OptimizationService} before each test.
+     */
     beforeEach(() => {
         service = new OptimizationService();
     });
 
+    /**
+     * Tests for the `optimizePickingOrder` method.
+     *
+     * This method is expected to:
+     * - Determine the most efficient order to pick products based on their positions.
+     * - Skip products with zero available quantity.
+     * - Throw an error if no valid product positions are available.
+     * - Correctly calculate the total distance traveled.
+     */
     describe('optimizePickingOrder', () => {
+        /**
+         * Verifies that the service returns the correct picking order
+         * and total distance when multiple products are available.
+         *
+         * Scenario:
+         * - Two products are present (`product-1` and `product-2`).
+         * - The service should choose the nearest position for each product
+         *   and calculate the distance from the starting position.
+         */
         it('should return correct picking order and distance for multiple products', () => {
             const productsPositions = new Map<string, ProductPosition[]>();
 
@@ -37,6 +65,10 @@ describe('OptimizationService', () => {
             expect(result.distance).toBeCloseTo(Math.sqrt(2), 2);
         });
 
+        /**
+         * Ensures that products with zero available quantity are skipped
+         * and not included in the picking order.
+         */
         it('should skip products with no available quantity', () => {
             const productsPositions = new Map<string, ProductPosition[]>();
 
@@ -60,6 +92,14 @@ describe('OptimizationService', () => {
             expect(result.pickingOrder[0].positionId).toBe('pos-2');
         });
 
+        /**
+         * Verifies that an error is thrown when no products
+         * have available positions to pick from.
+         *
+         * Expected behavior:
+         * - Throws an error with the message:
+         *   `"No available positions found for remaining products"`.
+         */
         it('should throw error if no available positions for any product', () => {
             const productsPositions = new Map<string, ProductPosition[]>();
 
@@ -78,6 +118,15 @@ describe('OptimizationService', () => {
             );
         });
 
+        /**
+         * Confirms that the method correctly handles the case
+         * where there is only a single product to pick.
+         *
+         * Checks that:
+         * - The picking order contains exactly one item.
+         * - The calculated distance matches the expected
+         *   Euclidean distance from the starting position.
+         */
         it('should correctly handle single product', () => {
             const productsPositions = new Map<string, ProductPosition[]>();
             productsPositions.set('product-1', [
