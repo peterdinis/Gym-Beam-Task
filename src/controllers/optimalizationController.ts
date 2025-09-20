@@ -14,18 +14,78 @@ export class OptimizationController {
 
     /**
      * Handles the **POST /optimize** request.
+     *
+     * @swagger
+     * /optimize:
+     *   post:
+     *     summary: Optimize picking order for an order
+     *     tags:
+     *       - Optimization
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               products:
+     *                 type: array
+     *                 items:
+     *                   type: string
+     *                 example: ["product-1", "product-2"]
+     *               startingPosition:
+     *                 type: object
+     *                 properties:
+     *                   x:
+     *                     type: number
+     *                     example: 0
+     *                   y:
+     *                     type: number
+     *                     example: 0
+     *                   z:
+     *                     type: number
+     *                     example: 0
+     *     responses:
+     *       200:
+     *         description: Successfully optimized picking order
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 distance:
+     *                   type: number
+     *                 pickingOrder:
+     *                   type: array
+     *                   items:
+     *                     type: object
+     *                     properties:
+     *                       productId:
+     *                         type: string
+     *                       positionId:
+     *                         type: string
+     *       400:
+     *         description: Invalid request body
+     *       404:
+     *         description: No available positions found for some products
+     *       502:
+     *         description: Unable to fetch warehouse data
+     *       500:
+     *         description: Internal server error
      */
     async optimizeOrder(req: Request, res: Response): Promise<void> {
         try {
+            // Validate request body using Zod
             const orderRequest = validateOrderRequest(req.body);
 
+            // Fetch available positions for all products
             const productsPositions = await this.warehouseApi.getMultipleProductPositions(
                 orderRequest.products,
             );
 
             // Throw 404 if any product has no positions
             const missingProducts = Array.from(productsPositions.entries())
-                .filter(([_, positions]) => positions.length === 0)
+                .filter(([positions]) => positions.length === 0)
                 .map(([productId]) => productId);
 
             if (missingProducts.length > 0) {
@@ -37,6 +97,7 @@ export class OptimizationController {
                 return;
             }
 
+            // Run optimization
             const result = this.optimizationService.optimizePickingOrder(
                 productsPositions,
                 orderRequest.startingPosition,

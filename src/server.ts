@@ -3,9 +3,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import optimalizationRoutes from './routes/optimalizationRoutes';
-import healthRoutes from "./routes/healthRoutes";
+import healthRoutes from './routes/healthRoutes';
 import { setupSwagger } from './swagger';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Main Express application for the **GymBeam Warehouse Optimization Server**.

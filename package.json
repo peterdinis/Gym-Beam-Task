@@ -11,7 +11,7 @@
     "format": "prettier --check 'src/**/*.{ts,js,json,md}'",
     "format:fix": "prettier --write 'src/**/*.{ts,js,json,md}'",
     "build": "tsc",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:watch": "jest --watch"
   },
   "keywords": [],

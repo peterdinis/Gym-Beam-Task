@@ -66,5 +66,5 @@ export class HealthController {
     getHealth = (_req: Request, res: Response): void => {
         const healthStatus = this.healthService.getHealthStatus();
         res.json(healthStatus);
-    }
+    };
 }
