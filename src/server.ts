@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import optimalizationRoutes from './routes/optimalizationRoutes';
 import healthRoutes from './routes/healthRoutes';
-import { setupSwagger } from './swagger';
+import { setupSwagger } from './lib/swagger';
 import dotenv from 'dotenv';
 
 dotenv.config();
